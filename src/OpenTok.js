@@ -170,6 +170,30 @@
       Cordova.exec(TBSuccess, TBError, "TokBox", "initPublisher", [position.top, position.left, width, height, name, publishAudio, publishVideo, zIndex]);
     }
 
+    TBPublisher.publishMedia = function(media, state) {
+      var publishState, _ref;
+      this.media = media;
+      this.state = state;
+      if ((_ref = this.media) !== "publishAudio" && _ref !== "publishVideo") {
+        return;
+      }
+      publishState = "true";
+      if ((this.state != null) && this.state === false) {
+        publishState = "false";
+      }
+      return Cordova.exec(TBSuccess, TBError, "TokBox", this.media, [publishState]);
+    };
+
+    TBPublisher.prototype.publishAudio = function(state) {
+      this.state = state;
+      return TBPublisher.publishMedia("publishAudio", this.state);
+    };
+
+    TBPublisher.prototype.publishVideo = function(state) {
+      this.state = state;
+      return TBPublisher.publishMedia("publishVideo", this.state);
+    };
+
     TBPublisher.prototype.destroy = function() {
       return Cordova.exec(TBSuccess, TBError, "TokBox", "destroyPublisher", []);
     };

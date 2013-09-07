@@ -116,6 +116,8 @@ TBGetZIndex = (ele) ->
 #     session (Session) — The Session to which the Publisher is publishing a stream. If the Publisher is not publishing a stream to a Session, this property is set to null.
 #     replaceElementId (String) — The ID of the DOM element that was replaced when the Publisher video stream was inserted.
 #   Methods: 
+#     publishAudio(Boolean) — Change the publishing state for Audio
+#     publishVideo(Boolean) — Change the publishing state for Video
 #     destroy() - not yet implemented
 class TBPublisher
   constructor: (@key, @domId, @properties={}) ->
@@ -138,6 +140,21 @@ class TBPublisher
     position = getPosition(@obj.id)
     TBUpdateObjects()
     Cordova.exec(TBSuccess, TBError, "TokBox", "initPublisher", [position.top, position.left, width, height, name, publishAudio, publishVideo, zIndex] )
+
+  @publishMedia: (@media, @state) ->
+    if @media not in ["publishAudio", "publishVideo"]
+      return
+    publishState="true"
+    if(@state? and @state==false)
+        publishState="false"
+    Cordova.exec(TBSuccess, TBError, "TokBox", @media, [publishState] )
+
+  publishAudio: (@state) ->
+    TBPublisher.publishMedia("publishAudio", @state)
+
+  publishVideo: (@state) ->
+    TBPublisher.publishMedia("publishVideo", @state)
+
   destroy: ->
     Cordova.exec(TBSuccess, TBError, "TokBox", "destroyPublisher", [] )
 
